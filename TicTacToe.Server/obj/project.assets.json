@@ -516,10 +516,11 @@
       ]
     },
     "Microsoft.NETCore.Platforms/2.1.0": {
-      "sha512": "TT+QCi9LcxGTjBssH7S7n5+8DVcwfG4DYgXX7Dk7+BfZ4oVHj8Q0CbYk9glzAlHLsSt3bYzol+fOdra2iu6GOw==",
+      "sha512": "aSTPL94NloSiQVL5Len8wbjFKOnoAX/vOh3s3DF6g3c7GUUMLCDvnBhmA72M2iN2AedyA8hpr7m89kzSAKUnJQ==",
       "type": "package",
       "path": "microsoft.netcore.platforms/2.1.0",
       "files": [
+        ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
@@ -681,28 +682,30 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jasio\\.nuget\\packages\\": {},
+    "C:\\Users\\PLMIJAS3\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
+      "projectUniqueName": "c:\\TicTacToe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
       "projectName": "TicTacToe.Server",
-      "projectPath": "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
-      "packagesPath": "C:\\Users\\jasio\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\obj\\",
+      "projectPath": "c:\\TicTacToe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
+      "packagesPath": "C:\\Users\\PLMIJAS3\\.nuget\\packages\\",
+      "outputPath": "c:\\TicTacToe\\TicTacToe\\TicTacToe.Server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\jasio\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\PLMIJAS3\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp2.1"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {

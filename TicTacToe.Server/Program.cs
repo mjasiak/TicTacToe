@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Net.Sockets;
 
 namespace TicTacToe.Server
 {
@@ -12,9 +14,12 @@ namespace TicTacToe.Server
             var listener = new TcpListener(listeningIP, _listeningPort);
             listener.Start();
             while(true){
-                var client = listener.Accept
+                var client = listener.AcceptTcpClient();
+                var stream = client.GetStream();
+                using(var streamReader = new StreamReader(stream)){
+
+                }
             }
-            Console.WriteLine("Hello World!");
         }
     }
 }
