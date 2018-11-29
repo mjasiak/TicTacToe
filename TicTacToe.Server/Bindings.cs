@@ -1,6 +1,8 @@
 using Ninject.Modules;
+using TicTacToe.Server.Handlers;
 using TicTacToe.Server.Managers;
 using TicTacToe.Server.Providers;
+using TicTacToe.Server.Resolvers;
 
 namespace TicTacToe.Server
 {
@@ -10,6 +12,8 @@ namespace TicTacToe.Server
         {
             Bind<ITcpListenerProvider>().To<TcpListenerProvider>();
             Bind<ITcpServerManager>().To<TcpServerManager>();
+            Bind<ITcpConnectionHandler>().To<TcpConnectionHandler>();
+            Bind<IRequestResolver>().To<RequestResolver>();
         }
     }
 }

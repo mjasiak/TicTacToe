@@ -17,9 +17,26 @@ namespace TicTacToe.Server {
             _tcpServerManager = kernel.Get<ITcpServerManager>();
             _tcpListenerProvider = kernel.Get<ITcpListenerProvider>();
         }
-        static void Main (string[] args) {          
-            var listeningIP = IPAddress.Parse ("127.0.0.1");
+        static void Main (string[] args)
+        {
+            StartListening();
+        }
+
+        private static void StartListening()
+        {
+            var server = CreateTcpServer();
+            RunServer(server);
+        }
+
+        private static TcpListener CreateTcpServer()
+        {
+            var listeningIP = IPAddress.Parse("127.0.0.1");
             var server = _tcpListenerProvider.CreateListener(listeningIP, _listeningPort);
+            return server;
+        }
+
+        private static void RunServer(TcpListener server)
+        {
             _tcpServerManager.Start(server);
             _tcpServerManager.Listen(server);
         }
