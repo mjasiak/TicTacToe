@@ -1,9 +1,9 @@
 using System.Net.Sockets;
 using Ninject.Modules;
+using TicTacToe.Resolver.Core;
 using TicTacToe.Server.Handlers;
 using TicTacToe.Server.Managers;
 using TicTacToe.Server.Providers;
-using TicTacToe.Server.Resolvers;
 
 namespace TicTacToe.Server
 {

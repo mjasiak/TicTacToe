@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TicTacToe.Common\TicTacToe.Common.csproj" />
     <ProjectReference Include="..\TicTacToe.Server\TicTacToe.Server.csproj" />
+    <ProjectReference Include="..\TicTacToe.Resolver\TicTacToe.Resolver.csproj" />
   </ItemGroup>
 
 </Project>

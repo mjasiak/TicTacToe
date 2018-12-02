@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using TicTacToe.Server.Handlers;
 using TicTacToe.Server.Listeners;
 using TicTacToe.Server.Providers;
-using TicTacToe.Server.Resolvers;
 
 namespace TicTacToe.Server.Managers
 {

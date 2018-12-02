@@ -11,14 +11,16 @@ namespace TicTacToe.Common.Models
             {
                 return new Message
                 {
-                    Status = MessageStatus.Failure,
                     Data = string.Empty,
-                    DataType = typeof(string)
+                    DataType = typeof(string),
+                    Format = MessageFormat.JSON,
+                    Status = MessageStatus.Failure,
                 };
             }
         }
-        MessageStatus Status { get; set; }
         string Data { get; set; }
-        Type DataType {get;set;}
+        Type DataType { get; set; }
+        MessageFormat Format { get; set; }
+        MessageStatus Status { get; set; }
     }
 }

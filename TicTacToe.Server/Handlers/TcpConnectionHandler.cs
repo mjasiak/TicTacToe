@@ -1,5 +1,5 @@
 using System.Net.Sockets;
-using TicTacToe.Server.Resolvers;
+using TicTacToe.Resolver.Core;
 
 namespace TicTacToe.Server.Handlers
 {
@@ -24,7 +24,7 @@ namespace TicTacToe.Server.Handlers
         {
             _connection = server.AcceptTcpClient();
         }
-        
+
         private void ResolveRequest()
         {
             var requestStream = GetRequestStream();
@@ -42,8 +42,16 @@ namespace TicTacToe.Server.Handlers
             _connection.Close();
         }
 
-        public bool IsConnectionActive(){
-            return _connection.Connected;
+        public bool IsConnectionActive()
+        {
+            if (_connection != null)
+            {
+                return _connection.Connected;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
