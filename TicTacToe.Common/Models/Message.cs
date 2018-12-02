@@ -1,3 +1,4 @@
+using System;
 using TicTacToe.Common.Enums;
 
 namespace TicTacToe.Common.Models
@@ -10,12 +11,14 @@ namespace TicTacToe.Common.Models
             {
                 return new Message
                 {
-                    Status = MessageStatus.Success,
-                    Data = string.Empty
+                    Status = MessageStatus.Failure,
+                    Data = string.Empty,
+                    DataType = typeof(string)
                 };
             }
         }
         MessageStatus Status { get; set; }
         string Data { get; set; }
+        Type DataType {get;set;}
     }
 }

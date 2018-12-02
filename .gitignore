@@ -6,3 +6,4 @@ x64/
 [Oo]bj/
 # Visual Studio Code
 .vscode/
+TicTacToe.Tests/lcov.info

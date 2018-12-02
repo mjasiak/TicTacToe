@@ -4,6 +4,6 @@ namespace TicTacToe.Common.Enums
 {
     public enum MessageStatus{
         Success,
-        Failed
+        Failure
     }
 }

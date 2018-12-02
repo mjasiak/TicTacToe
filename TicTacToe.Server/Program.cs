@@ -6,39 +6,27 @@ using Ninject;
 using TicTacToe.Server.Managers;
 using TicTacToe.Server.Providers;
 
-namespace TicTacToe.Server {
-    class Program {
+namespace TicTacToe.Server
+{
+    class Program
+    {
+        private const string _listeningAddress = "127.0.0.1";
         private const int _listeningPort = 50000;
-        private static readonly ITcpServerManager _tcpServerManager;
-        private static readonly ITcpListenerProvider _tcpListenerProvider;
+        private static readonly IServerManager _serverManager;
 
-        static Program () {
-            var kernel = new StandardKernel (new Bindings ());
-            _tcpServerManager = kernel.Get<ITcpServerManager>();
-            _tcpListenerProvider = kernel.Get<ITcpListenerProvider>();
-        }
-        static void Main (string[] args)
+        static Program()
         {
-            StartListening();
+            var kernel = new StandardKernel(new Bindings());
+            _serverManager = kernel.Get<IServerManager>();
         }
-
-        private static void StartListening()
+        static void Main(string[] args)
         {
-            var server = CreateTcpServer();
-            RunServer(server);
+            RunTcpServer(_listeningAddress, _listeningPort);
         }
 
-        private static TcpListener CreateTcpServer()
+        private static void RunTcpServer(string listeningIPAddress, int listeningPort)
         {
-            var listeningIP = IPAddress.Parse("127.0.0.1");
-            var server = _tcpListenerProvider.CreateListener(listeningIP, _listeningPort);
-            return server;
-        }
-
-        private static void RunServer(TcpListener server)
-        {
-            _tcpServerManager.Start(server);
-            _tcpServerManager.Listen(server);
+            _serverManager.RunServer(listeningIPAddress, listeningPort);
         }
     }
 }

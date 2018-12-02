@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using Ninject.Modules;
 using TicTacToe.Server.Handlers;
 using TicTacToe.Server.Managers;
@@ -11,8 +12,8 @@ namespace TicTacToe.Server
         public override void Load()
         {
             Bind<ITcpListenerProvider>().To<TcpListenerProvider>();
-            Bind<ITcpServerManager>().To<TcpServerManager>();
-            Bind<ITcpConnectionHandler>().To<TcpConnectionHandler>();
+            Bind<IServerManager>().To<TcpServerManager>();
+            Bind<IConnectionHandler<TcpListener>>().To<TcpConnectionHandler>();
             Bind<IRequestResolver>().To<RequestResolver>();
         }
     }
