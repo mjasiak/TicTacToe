@@ -1,40 +1,52 @@
 using System;
 using System.IO;
 using TicTacToe.Common.Models;
-using TicTacToe.Resolver.Processor;
+using TicTacToe.Resolver.Converters;
 
 namespace TicTacToe.Resolver.Core
 {
     public class RequestResolver : IRequestResolver
     {
-        private readonly IRequestProcessor _requestProcessor;
+        private readonly IMessageConverter _messageConverter;
 
-        public RequestResolver(IRequestProcessor requestProcessor)
+        public RequestResolver(IMessageConverter messageConverter)
         {
-            _requestProcessor = requestProcessor;
+            _messageConverter = messageConverter;
         }
-        public void Resolve(Stream clientStream)
+        public string Resolve(Stream requestStream)
         {
-            var responseMessage = GetResponseMessage(clientStream);
-            SendResponseToClient(clientStream, responseMessage);
-        }
-
-        private void SendResponseToClient(Stream clientStream, string responseMessage)
-        {
-            using (var streamWriter = new StreamWriter(clientStream))
+            using (var streamReader = new StreamReader(requestStream))
             {
-                streamWriter.WriteLine(responseMessage);
+                RequestMessage requestMessage = GetRequestMessage(streamReader);
+                ResponseMessage responseMessage = ResponseMessage.Empty;
+
+                switch (requestMessage.Method)
+                {
+                    case "users/show":
+                        {
+                            //responseMessage = _usersManager.ShowConnectedUsers();
+                            break;
+                        }
+                    case "user/add":
+                        {
+                            //responseMessage = _usersManager.AddUser(requestMessage.Data);
+                            break;
+                        }
+                }
+
+                return ConvertResponseMessage(responseMessage);
             }
         }
 
-        private string GetResponseMessage(Stream clientStream)
+        private string ConvertResponseMessage(ResponseMessage responseMessage)
         {
-            using (var streamReader = new StreamReader(clientStream))
-            {
-                var clientRequest = streamReader.ReadLine();
-                var responseMessage = _requestProcessor.GetResponse(clientRequest);
-                return responseMessage;
-            }
+            return _messageConverter.ConvertToJson(responseMessage);
+        }
+
+        private RequestMessage GetRequestMessage(StreamReader streamReader)
+        {
+            var clientRequest = streamReader.ReadLine();
+            return _messageConverter.ConvertToRequestMessage(clientRequest);
         }
     }
 }

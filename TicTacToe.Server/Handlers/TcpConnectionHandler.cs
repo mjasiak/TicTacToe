@@ -1,3 +1,4 @@
+using System;
 using System.Net.Sockets;
 using TicTacToe.Resolver.Core;
 
@@ -16,8 +17,14 @@ namespace TicTacToe.Server.Handlers
         public void Handle(TcpListener server)
         {
             GetClientConnection(server);
-            ResolveRequest();
+            var response = GetResponse();
+            SendResponse(response);
             CloseConnection();
+        }
+
+        private void SendResponse(string response)
+        {
+            throw new NotImplementedException();
         }
 
         private void GetClientConnection(TcpListener server)
@@ -25,10 +32,10 @@ namespace TicTacToe.Server.Handlers
             _connection = server.AcceptTcpClient();
         }
 
-        private void ResolveRequest()
+        private string GetResponse()
         {
             var requestStream = GetRequestStream();
-            _requestResolver.Resolve(requestStream);
+            return _requestResolver.Resolve(requestStream);
         }
 
         private NetworkStream GetRequestStream()

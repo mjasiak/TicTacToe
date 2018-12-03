@@ -328,6 +328,19 @@
         "runtime": {
           "bin/placeholder/TicTacToe.Common.dll": {}
         }
+      },
+      "TicTacToe.Resolver/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "TicTacToe.Common": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/TicTacToe.Resolver.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/TicTacToe.Resolver.dll": {}
+        }
       }
     }
   },
@@ -1336,13 +1349,19 @@
       "type": "project",
       "path": "../TicTacToe.Common/TicTacToe.Common.csproj",
       "msbuildProject": "../TicTacToe.Common/TicTacToe.Common.csproj"
+    },
+    "TicTacToe.Resolver/1.0.0": {
+      "type": "project",
+      "path": "../TicTacToe.Resolver/TicTacToe.Resolver.csproj",
+      "msbuildProject": "../TicTacToe.Resolver/TicTacToe.Resolver.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.1": [
       "Microsoft.NETCore.App >= 2.1.0",
       "Ninject >= 3.3.4",
-      "TicTacToe.Common >= 1.0.0"
+      "TicTacToe.Common >= 1.0.0",
+      "TicTacToe.Resolver >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -1352,11 +1371,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
+      "projectUniqueName": "c:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
       "projectName": "TicTacToe.Server",
-      "projectPath": "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
+      "projectPath": "c:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\TicTacToe.Server.csproj",
       "packagesPath": "C:\\Users\\jasio\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\obj\\",
+      "outputPath": "c:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -1373,8 +1392,11 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Common\\TicTacToe.Common.csproj": {
-              "projectPath": "C:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Common\\TicTacToe.Common.csproj"
+            "c:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Common\\TicTacToe.Common.csproj": {
+              "projectPath": "c:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Common\\TicTacToe.Common.csproj"
+            },
+            "c:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Resolver\\TicTacToe.Resolver.csproj": {
+              "projectPath": "c:\\Users\\jasio\\Documents\\Programs\\Programowanie sieciowe\\TicTacToe\\TicTacToe.Resolver\\TicTacToe.Resolver.csproj"
             }
           }
         }
