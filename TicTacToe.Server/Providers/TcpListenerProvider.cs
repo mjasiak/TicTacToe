@@ -9,5 +9,16 @@ namespace TicTacToe.Server.Providers
         {
             return new TcpListener(listeningIPAddress, listeningPort);
         }
+
+        public TcpListener CreateListener(string listeningIPAddress, int listeningPort)
+        {
+            IPAddress ipAddressInstance = CreateIPAddressInstance(listeningIPAddress);
+            return new TcpListener(ipAddressInstance, listeningPort);
+        }
+
+        private IPAddress CreateIPAddressInstance(string listeningIPAddress)
+        {
+            return IPAddress.Parse(listeningIPAddress);
+        }
     }
 }

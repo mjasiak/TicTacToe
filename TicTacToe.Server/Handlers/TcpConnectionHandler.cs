@@ -1,64 +1,50 @@
 using System;
+using System.IO;
 using System.Net.Sockets;
 using TicTacToe.Resolver.Core;
 
 namespace TicTacToe.Server.Handlers
 {
 
-    public class TcpConnectionHandler : IConnectionHandler<TcpListener>
+    public class TcpConnectionHandler : IConnectionHandler<TcpClient>
     {
         private readonly IRequestResolver _requestResolver;
-        private TcpClient _connection;
 
         public TcpConnectionHandler(IRequestResolver requestResolver)
         {
             _requestResolver = requestResolver;
         }
-        public void Handle(TcpListener server)
+        public void Handle(TcpClient connection)
         {
-            GetClientConnection(server);
-            var response = GetResponse();
-            SendResponse(response);
-            CloseConnection();
+            var clientStream = GetClientStream(connection);
+            HandleClientStream(clientStream);
+            CloseConnection(connection);
         }
 
-        private void SendResponse(string response)
+        private void HandleClientStream(NetworkStream clientStream)
         {
-            throw new NotImplementedException();
-        }
-
-        private void GetClientConnection(TcpListener server)
-        {
-            _connection = server.AcceptTcpClient();
-        }
-
-        private string GetResponse()
-        {
-            var requestStream = GetRequestStream();
-            return _requestResolver.Resolve(requestStream);
-        }
-
-        private NetworkStream GetRequestStream()
-        {
-            var clientStream = _connection.GetStream();
-            return clientStream;
-        }
-
-        private void CloseConnection()
-        {
-            _connection.Close();
-        }
-
-        public bool IsConnectionActive()
-        {
-            if (_connection != null)
+            using (var streamReader = new StreamReader(clientStream))
+            using (var streamWriter = new StreamWriter(clientStream))
             {
-                return _connection.Connected;
+                var clientRequest = streamReader.ReadLine();
+                var response = GetResponse(clientRequest);
+                streamWriter.WriteLine(response);
             }
-            else
-            {
-                return false;
-            }
+        }    
+
+        private string GetResponse(string clientRequest)
+        {
+            return _requestResolver.Resolve(clientRequest);
+        }
+
+        private NetworkStream GetClientStream(TcpClient connection)
+        {
+            return connection.GetStream();
+        }
+
+        private void CloseConnection(TcpClient connection)
+        {
+            connection.Close();
         }
     }
 }

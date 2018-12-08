@@ -6,7 +6,11 @@ using TicTacToe.Common.Models;
 namespace TicTacToe.Resolver.Managers {
     public class PlayersManager : IPlayersManager
     {
-        private List<Player> _listOfConnectedPlayers = new List<Player>();
+        private List<Player> _listOfConnectedPlayers = new List<Player>(){
+            new Player{
+                Name="Jasiek"
+            }
+        };
         public ResponseMessage AddPlayer(string data)
         {
             var newPlayer = JsonConvert.DeserializeObject<Player>(data);

@@ -2,40 +2,40 @@ using System;
 using System.IO;
 using TicTacToe.Common.Models;
 using TicTacToe.Resolver.Converters;
+using TicTacToe.Resolver.Managers;
 
 namespace TicTacToe.Resolver.Core
 {
     public class RequestResolver : IRequestResolver
     {
         private readonly IMessageConverter _messageConverter;
+        private readonly IPlayersManager _playersManager;
 
-        public RequestResolver(IMessageConverter messageConverter)
+        public RequestResolver(IMessageConverter messageConverter, IPlayersManager playersManager)
         {
             _messageConverter = messageConverter;
+            _playersManager = playersManager;
         }
-        public string Resolve(Stream requestStream)
+        public string Resolve(string clientRequest)
         {
-            using (var streamReader = new StreamReader(requestStream))
+            RequestMessage requestMessage = GetRequestMessage(clientRequest);
+            ResponseMessage responseMessage = ResponseMessage.Empty;
+
+            switch (requestMessage.Method)
             {
-                RequestMessage requestMessage = GetRequestMessage(streamReader);
-                ResponseMessage responseMessage = ResponseMessage.Empty;
-
-                switch (requestMessage.Method)
-                {
-                    case "users/show":
-                        {
-                            //responseMessage = _usersManager.ShowConnectedUsers();
-                            break;
-                        }
-                    case "user/add":
-                        {
-                            //responseMessage = _usersManager.AddUser(requestMessage.Data);
-                            break;
-                        }
-                }
-
-                return ConvertResponseMessage(responseMessage);
+                case "users/show":
+                    {
+                        responseMessage = _playersManager.ShowConnectedPlayers();
+                        break;
+                    }
+                case "user/add":
+                    {
+                        //responseMessage = _usersManager.AddUser(requestMessage.Data);
+                        break;
+                    }
             }
+
+            return ConvertResponseMessage(responseMessage);
         }
 
         private string ConvertResponseMessage(ResponseMessage responseMessage)
@@ -43,9 +43,8 @@ namespace TicTacToe.Resolver.Core
             return _messageConverter.ConvertToJson(responseMessage);
         }
 
-        private RequestMessage GetRequestMessage(StreamReader streamReader)
+        private RequestMessage GetRequestMessage(string clientRequest)
         {
-            var clientRequest = streamReader.ReadLine();
             return _messageConverter.ConvertToRequestMessage(clientRequest);
         }
     }

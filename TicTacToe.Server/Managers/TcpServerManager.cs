@@ -3,67 +3,48 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using TicTacToe.Server.Handlers;
-using TicTacToe.Server.Listeners;
 using TicTacToe.Server.Providers;
 
 namespace TicTacToe.Server.Managers
 {
-    public class TcpServerManager : IServerManager
+    public class TcpServerManager : IServerManager<TcpListener>
     {
-        private TcpListener _server;
-        private bool _isListening = false;
         private readonly ITcpListenerProvider _tcpListenerProvider;
-        private readonly IServerListener<TcpListener> _tcpServerListener;
+        private readonly IConnectionHandler<TcpClient> _tcpConnectionHandler;
 
-        public TcpServerManager(ITcpListenerProvider tcpListenerProvider, IServerListener<TcpListener> tcpServerListener)
+        public TcpServerManager(ITcpListenerProvider tcpListenerProvider, IConnectionHandler<TcpClient> tcpConnectionHandler)
         {
             _tcpListenerProvider = tcpListenerProvider;
-            _tcpServerListener = tcpServerListener;
+            _tcpConnectionHandler = tcpConnectionHandler;
         }
-        public void RunServer(string listeningIPAddress, int listeningPort)
+        public void RunServer(TcpListener server)
         {
-            _server = CreateListener(listeningIPAddress, listeningPort);
-            StartServer();
-            StartListening();
-        }
-
-        private void StartListening()
-        {
-            _tcpServerListener.Listen(_server);
+            StartServer(server);
+            StartListening(server);
         }
 
-        private TcpListener CreateListener(string listeningIPAddress, int listeningPort)
+        private void StartListening(TcpListener server)
         {
-            IPAddress ipAddressInstance = CreateIPAddressInstance(listeningIPAddress);
-            var listener = _tcpListenerProvider.CreateListener(ipAddressInstance, listeningPort);
-            return listener;
+            while(true){
+                var connection = GetClientConnection(server);
+                _tcpConnectionHandler.Handle(connection);
+            }
         }
 
-        private static IPAddress CreateIPAddressInstance(string listeningIPAddress)
-        {
-            return IPAddress.Parse(listeningIPAddress);
+        private TcpClient GetClientConnection(TcpListener server){
+            Console.WriteLine("Server is listening for incoming connections.");
+            return server.AcceptTcpClient();
         }
 
-        private void StartServer()
+        private void StartServer(TcpListener server)
         {
-                _server.Start();
-                ChangeServerStatus(true);
+                server.Start();
+                Console.WriteLine("Server has started.");
         }
 
-        private void ChangeServerStatus(bool status)
+        public void StopServer(TcpListener server)
         {
-            _isListening = status;
-        }
-
-        public void StopServer()
-        {
-            _server.Stop();
-            ChangeServerStatus(false);
-        }
-
-        public bool IsServerListening()
-        {
-            return _isListening;
+            server.Stop();
         }
     }
 }

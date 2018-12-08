@@ -3,10 +3,9 @@ using System.Net.Sockets;
 
 namespace TicTacToe.Server.Managers
 {
-    public interface IServerManager
+    public interface IServerManager<T>
     {
-        void RunServer(string listeningIPAddress,int listeningPort);
-        void StopServer();
-        bool IsServerListening();
+        void RunServer(T server);
+        void StopServer(T server);
     }
 }

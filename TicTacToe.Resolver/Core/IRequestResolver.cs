@@ -5,6 +5,6 @@ namespace TicTacToe.Resolver.Core
 {
     public interface IRequestResolver
     {
-        string Resolve(Stream requestStream);
+        string Resolve(string clientRequest);
     }
 }
