@@ -27,6 +27,7 @@ namespace TicTacToe.Server.Handlers
             using (var streamWriter = new StreamWriter(clientStream))
             {
                 var clientRequest = streamReader.ReadLine();
+                Console.WriteLine($"Request: {clientRequest}");
                 var response = GetResponse(clientRequest);
                 streamWriter.WriteLine(response);
             }

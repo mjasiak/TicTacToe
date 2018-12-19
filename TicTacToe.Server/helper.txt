@@ -1,0 +1,5 @@
+//showing active players
+{"Data":"","Method":"users/show"}
+
+//adding player
+{"Data":"{'Name':'Michal'}","Method":"user/add"}

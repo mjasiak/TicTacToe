@@ -30,7 +30,7 @@ namespace TicTacToe.Resolver.Core
                     }
                 case "user/add":
                     {
-                        //responseMessage = _usersManager.AddUser(requestMessage.Data);
+                        responseMessage = _playersManager.AddPlayer(requestMessage.Data);
                         break;
                     }
             }
