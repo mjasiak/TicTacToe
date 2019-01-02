@@ -25,14 +25,16 @@ namespace TicTacToe.Server.Managers
 
         private void StartListening(TcpListener server)
         {
+            Console.WriteLine("Server is listening for incoming connections.");
             while(true){
                 var connection = GetClientConnection(server);
                 _tcpConnectionHandler.Handle(connection);
+                Console.WriteLine("Client connection handled...");
+                Console.WriteLine("Waiting for new connection...");
             }
         }
 
-        private TcpClient GetClientConnection(TcpListener server){
-            Console.WriteLine("Server is listening for incoming connections.");
+        private TcpClient GetClientConnection(TcpListener server){           
             return server.AcceptTcpClient();
         }
 
