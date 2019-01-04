@@ -12,7 +12,14 @@ namespace TicTacToe.Resolver.Converters
 
         public RequestMessage ConvertToRequestMessage(string requestToConvert)
         {
-            return JsonConvert.DeserializeObject<RequestMessage>(requestToConvert);
+            try
+            {
+                return JsonConvert.DeserializeObject<RequestMessage>(requestToConvert);
+            }
+            catch
+            {
+                return RequestMessage.Empty;
+            }
         }
 
         public ResponseMessage ConvertToResponseMessage(string requestToConvert)

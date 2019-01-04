@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using TicTacToe.Resolver.Core;
 
 namespace TicTacToe.Server.Handlers
@@ -15,7 +16,7 @@ namespace TicTacToe.Server.Handlers
         {
             _requestResolver = requestResolver;
         }
-        public void Handle(TcpClient connection)
+        public async Task HandleConnection(TcpClient connection)
         {
             var clientStream = GetClientStream(connection);
             HandleClientStream(clientStream);

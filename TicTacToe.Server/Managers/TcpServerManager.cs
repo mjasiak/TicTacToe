@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using TicTacToe.Server.Handlers;
 using TicTacToe.Server.Providers;
 
@@ -23,19 +24,18 @@ namespace TicTacToe.Server.Managers
             StartListening(server);
         }
 
-        private void StartListening(TcpListener server)
+        private async void StartListening(TcpListener server)
         {
             Console.WriteLine("Server is listening for incoming connections.");
             while(true){
-                var connection = GetClientConnection(server);
-                _tcpConnectionHandler.Handle(connection);
+                var connection = await GetClientConnectionAsync(server);
+                await _tcpConnectionHandler.HandleConnection(connection);
                 Console.WriteLine("Client connection handled...");
-                Console.WriteLine("Waiting for new connection...");
             }
         }
 
-        private TcpClient GetClientConnection(TcpListener server){           
-            return server.AcceptTcpClient();
+        private async Task<TcpClient> GetClientConnectionAsync(TcpListener server){           
+            return await server.AcceptTcpClientAsync();
         }
 
         private void StartServer(TcpListener server)
