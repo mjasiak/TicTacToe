@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 using Ninject.Modules;
-using TicTacToe.Resolver.Converters;
+using TicTacToe.Common.Converters;
 using TicTacToe.Resolver.Core;
 using TicTacToe.Resolver.Managers;
 using TicTacToe.Server.Handlers;
@@ -17,7 +17,8 @@ namespace TicTacToe.Server
             Bind<IServerManager<TcpListener>>().To<TcpServerManager>();
             Bind<IConnectionHandler<TcpClient>>().To<TcpConnectionHandler>();
             Bind<IMessageConverter>().To<MessageConverter>();
-            Bind<IPlayersManager>().To<PlayersManager>();
+            Bind<IPlayersManager>().To<PlayersManager>().InSingletonScope();
+            Bind<IGameManager>().To<GameManager>().InSingletonScope();
             Bind<IRequestResolver>().To<RequestResolver>();
         }
     }

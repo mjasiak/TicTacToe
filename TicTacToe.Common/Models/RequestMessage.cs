@@ -13,6 +13,5 @@ namespace TicTacToe.Common.Models
                 };
             }
         }
-        public string Method { get; set; }
     }
 }

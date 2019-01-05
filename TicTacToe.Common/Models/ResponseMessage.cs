@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using TicTacToe.Common.Enums;
 
 namespace TicTacToe.Common.Models
@@ -11,6 +12,8 @@ namespace TicTacToe.Common.Models
                 return new ResponseMessage
                 {
                     Data = string.Empty,
+                    Method = string.Empty,
+                    InnerMethod = string.Empty,
                     Status = MessageStatus.Failure,
                     Text = string.Empty
                 };
@@ -18,5 +21,6 @@ namespace TicTacToe.Common.Models
         }
         public MessageStatus Status { get; set; }
         public string Text { get; set; }
+        public string InnerMethod { get; set; }
     }
 }

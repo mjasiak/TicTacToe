@@ -1,8 +1,10 @@
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using TicTacToe.Common;
+using TicTacToe.Common.Enums;
+using TicTacToe.Common.Models;
 using TicTacToe.Resolver.Core;
 
 namespace TicTacToe.Server.Handlers
@@ -11,65 +13,44 @@ namespace TicTacToe.Server.Handlers
     public class TcpConnectionHandler : IConnectionHandler<TcpClient>
     {
         private readonly IRequestResolver _requestResolver;
+        private List<ClientConnection> _activeConnections = new List<ClientConnection>();
 
         public TcpConnectionHandler(IRequestResolver requestResolver)
         {
             _requestResolver = requestResolver;
         }
-        public async Task HandleConnection(TcpClient connection)
+
+        public void HandleConnection(TcpClient client)
         {
-            var clientStream = GetClientStream(connection);
-            HandleClientStream(clientStream);
-            CloseConnection(connection);
+            var connection = new ClientConnection(client);
+            _activeConnections.Add(connection);
+
+            var connectionHandler = new ClientConnectionHandler(connection);
+
+            connectionHandler.OnMessageReceived += connectionHandler_OnMessageReceived;
+            connectionHandler.StartListening();
         }
 
-        private void HandleClientStream(NetworkStream clientStream)
+        private void connectionHandler_OnMessageReceived(object source, string requestMessage)
         {
-            Console.WriteLine("Client connected...");
-            var clientRequest = GetClientRequest(clientStream);
-            Console.WriteLine($"Request: {clientRequest}");
-            var response = GetResponse(clientRequest);
-            SendResponse(clientStream, response);
-        }
+            var clientConnectionHandler = source as ClientConnectionHandler;
+            var responseMessage = _requestResolver.Resolve(requestMessage);
 
-        private void SendResponse(NetworkStream clientStream, string response)
-        {
-            var streamWriter = new StreamWriter(clientStream);
-
-            streamWriter.WriteLine(response);
-            streamWriter.Flush();
-        }
-
-        private string GetClientRequest(NetworkStream clientStream)
-        {
-            using (var catchedStream = new MemoryStream())
+            var serializedResponseMessage = JsonConvert.SerializeObject(responseMessage);
+            clientConnectionHandler.Send(serializedResponseMessage);
+            if (responseMessage.Status == MessageStatus.Success)
             {
-                byte[] data = new byte[1024];
-                do
+                foreach (var connection in _activeConnections)
                 {
-                    clientStream.Read(data, 0, data.Length);
-                    catchedStream.Write(data, 0, data.Length);
-                } while (clientStream.DataAvailable);
-
-                Console.WriteLine("Data read");
-                return Encoding.ASCII.GetString(catchedStream.GetBuffer(), 0, (int)catchedStream.Length);
+                    if (connection.Id != clientConnectionHandler.Connection.Id)
+                    {
+                        var userConnectionHandler = new ClientConnectionHandler(connection);
+                        userConnectionHandler.Send(serializedResponseMessage);
+                    }
+                }
             }
+
         }
 
-        private string GetResponse(string clientRequest)
-        {
-            return _requestResolver.Resolve(clientRequest);
-        }
-
-        private NetworkStream GetClientStream(TcpClient connection)
-        {
-            return connection.GetStream();
-        }
-
-        private void CloseConnection(TcpClient connection)
-        {
-            connection.Close();
-            Console.WriteLine("Connection closed.");
-        }
     }
 }

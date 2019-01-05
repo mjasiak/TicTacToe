@@ -1,7 +1,7 @@
 using System;
 using System.IO;
+using TicTacToe.Common.Converters;
 using TicTacToe.Common.Models;
-using TicTacToe.Resolver.Converters;
 using TicTacToe.Resolver.Managers;
 
 namespace TicTacToe.Resolver.Core
@@ -10,37 +10,34 @@ namespace TicTacToe.Resolver.Core
     {
         private readonly IMessageConverter _messageConverter;
         private readonly IPlayersManager _playersManager;
+        private readonly IGameManager _gameManager;
 
-        public RequestResolver(IMessageConverter messageConverter, IPlayersManager playersManager)
+        public RequestResolver(IMessageConverter messageConverter, IPlayersManager playersManager, IGameManager gameManager)
         {
             _messageConverter = messageConverter;
             _playersManager = playersManager;
+            _gameManager = gameManager;
         }
-        public string Resolve(string clientRequest)
+        public ResponseMessage Resolve(string clientRequest)
         {
             RequestMessage requestMessage = GetRequestMessage(clientRequest);
             ResponseMessage responseMessage = ResponseMessage.Empty;
 
             switch (requestMessage.Method)
             {
-                case "users/show":
+                case "game/start":
                     {
-                        responseMessage = _playersManager.ShowConnectedPlayers();
+                        responseMessage = _gameManager.Start();
                         break;
                     }
-                case "user/add":
+                case "player/add":
                     {
                         responseMessage = _playersManager.AddPlayer(requestMessage.Data);
                         break;
                     }
             }
 
-            return ConvertResponseMessage(responseMessage);
-        }
-
-        private string ConvertResponseMessage(ResponseMessage responseMessage)
-        {
-            return _messageConverter.ConvertToJson(responseMessage);
+            return responseMessage;
         }
 
         private RequestMessage GetRequestMessage(string clientRequest)

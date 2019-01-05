@@ -1,6 +1,6 @@
 using TicTacToe.Common.Models;
 
-namespace TicTacToe.Resolver.Converters
+namespace TicTacToe.Common.Converters
 {
     public interface IMessageConverter
     {

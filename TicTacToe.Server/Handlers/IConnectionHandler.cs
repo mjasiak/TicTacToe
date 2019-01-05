@@ -5,6 +5,6 @@ namespace TicTacToe.Server.Handlers
 {
     public interface IConnectionHandler<T>
     {
-        Task HandleConnection(T client);
+        void HandleConnection(T client);
     }
 }

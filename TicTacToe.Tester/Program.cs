@@ -4,7 +4,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using TicTacToe.Common;
+using TicTacToe.Common.Converters;
+using TicTacToe.Common.Enums;
+using TicTacToe.Common.Models;
 
 namespace TicTacToe.Tester
 {
@@ -12,77 +16,114 @@ namespace TicTacToe.Tester
     {
         private static string _listeningAddress = "127.0.0.1";
         private static int _listeningPort = 50000;
+        private static IMessageConverter _messageConverter;
 
+        static Program()
+        {
+            _messageConverter = new MessageConverter();
+        }
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome in TicTacToe v.0.1 by Michal Jasiak...");
+            Console.WriteLine("Welcome in Console.TicTacToe v.0.1 by Michal Jasiak...\r\n");
             Console.WriteLine("Please give your name...");
             var name = Console.ReadLine();
-            Console.WriteLine(string.Format("Hello {0}...", name));
-            Console.WriteLine("Now we will try to connect you to the game host...");
+            Console.WriteLine(string.Format("Hello {0} do you want X or O?", name));
+            var flag = Console.ReadLine();
+            Console.WriteLine("Connecting...");
 
-            var client = new ClientConnection();
-            client.OnMessageReceived += connectionManager_OnMessageReceived;
-            client.Connect(_listeningAddress, _listeningPort);
-            client.Send(name);
-            client.StartListening();
+            var connection = ClientConnection.Connect(_listeningAddress, _listeningPort);
+            var connectionHandler = new ClientConnectionHandler(connection);
+            connectionHandler.OnMessageReceived += connectionHandler_OnMessageReceived;
+            var requestMessage = new RequestMessage
+            {
+                Data = JsonConvert.SerializeObject(new Player
+                {
+                    Name = name,
+                    XO = flag
+                }),
+                Method = "player/add"
+            };
+            connectionHandler.Send(JsonConvert.SerializeObject(requestMessage));
+            connectionHandler.StartListening();
 
             string message = string.Empty;
             message = Console.ReadLine();
             while (!message.Equals("exit"))
             {
-                client.Send(message);
+                switch (message)
+                {
+                    case "newgame":
+                        {
+                            requestMessage = new RequestMessage
+                            {
+                                Data = string.Empty,
+                                Method = "game/start"
+                            };
+                            connectionHandler.Send(requestMessage.Serialize());
+                            break;
+                        }
+                    default:
+                        {
+                            Console.WriteLine("Command doesn't exist");
+                            break;
+                        }
+                }
                 message = Console.ReadLine();
             }
-            // var clientConnection = new ClientConnection();
-            // clientConnection.Connect(_listeningAddress, _listeningPort);
-            // // var tcpClient = new TcpClient(_listeningAddress, _listeningPort);
 
-            // // Console.WriteLine($"Connected with server on {_listeningAddress}:{_listeningPort}");
-            // // Introduce(name, tcpClient);
-            // // // var positions = InitPositions();
-            // // // BuildMap(positions);
-            // // // clientConnection.OnMessageReceived += HandleReceviedMessage;
-            // // // clientConnection.Receive();
-            // // _listeningTask = Task.Run(() =>
-            // // {
-            // //     var stream = tcpClient.GetStream();
-            // //     Console.WriteLine("* You have started listening... *");
-            // //     while (true)
-            // //     {
-            // //         var streamReader = new StreamReader(stream);
-            // //         var response = streamReader.ReadLine();
-            // //         Console.WriteLine(response);
-            // //     }
-            // // });
-            // // string message = string.Empty;
-            // // message = Console.ReadLine();
-            // // while (!message.Equals("exit"))
-            // // {
-            // //     var clientStream = tcpClient.GetStream();
-            // //     var streamWriter = new StreamWriter(clientStream);
-            // //     streamWriter.WriteLine(message);
-            // //     streamWriter.Flush();
-            // //     message = Console.ReadLine();
-            // // }
-            // while (!message.Equals("exit"))
-            // {
-            //     var client = new TcpClient(_listeningAddress, _listeningPort);
-            //     var stream = client.GetStream();
-            //     var streamWriter = new StreamWriter(stream);
-            //     streamWriter.Write(message);
-            //     streamWriter.Flush();
-            //     var response = GetClientRequest(stream);
-            //     Console.WriteLine($"Response: {response}");
-            //     Console.WriteLine("New command: ");
-            //     message = Console.ReadLine();
-            // }
             Console.WriteLine("* Client has exited... *");
+            Console.Clear();
         }
 
-        private static void connectionManager_OnMessageReceived(object source, string message)
+        private static void connectionHandler_OnMessageReceived(object source, string message)
         {
-            Console.WriteLine(message);
+            var clientConnectionHandler = source as ClientConnectionHandler;
+            var responseMessage = _messageConverter.ConvertToResponseMessage(message);
+            switch (responseMessage.Method)
+            {
+                case "player/added":
+                    {
+                        Console.WriteLine(responseMessage.Text);
+                        if (responseMessage.Status == MessageStatus.Failure)
+                        {
+                            if (responseMessage.InnerMethod.Equals("samechar"))
+                            {
+                                var player = JsonConvert.DeserializeObject<Player>(responseMessage.Data);
+                                var requestMessage = new RequestMessage
+                                {
+                                    Data = JsonConvert.SerializeObject(new Player
+                                    {
+                                        Name = player.Name,
+                                        XO = player.XO.Equals("X") ? "O" : "X"
+                                    }),
+                                    Method = "player/add"
+                                };
+                                clientConnectionHandler.Send(_messageConverter.ConvertToJson(requestMessage));
+                            }
+                        }
+                        break;
+                    }
+                case "game/started":
+                    {
+                        if (responseMessage.Status == MessageStatus.Success)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("* Game has been started *\r\n");
+                            Game game = JsonConvert.DeserializeObject<Game>(responseMessage.Data);
+                            BuildMap(game.Map);
+                        }
+                        else
+                        {
+                            Console.WriteLine(responseMessage.Text);
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        Console.WriteLine("* Something bad happened *");
+                        break;
+                    }
+            }
         }
 
         #region NotUsed
@@ -94,27 +135,20 @@ namespace TicTacToe.Tester
             streamWriter.Flush();
         }
 
-        static void BuildMap(string[] positions)
+        static void BuildMap(string[] map)
         {
-            Console.WriteLine($" {positions[0]}  |  {positions[1]}  |  {positions[2]}  ");
+            Console.WriteLine($" {map[0]}  |  {map[1]}  |  {map[2]}  ");
             Console.WriteLine("----------------------");
-            Console.WriteLine($" {positions[3]}  |  {positions[4]}  |  {positions[5]}  ");
+            Console.WriteLine($" {map[3]}  |  {map[4]}  |  {map[5]}  ");
             Console.WriteLine("----------------------");
-            Console.WriteLine($" {positions[6]}  |  {positions[7]}  |  {positions[8]}  ");
+            Console.WriteLine($" {map[6]}  |  {map[7]}  |  {map[8]}  ");
         }
         static string[] InitPositions()
         {
             var positions = new string[9];
             for (int i = 0; i < positions.Length; i++)
             {
-                if (i % 2 == 0)
-                {
-                    positions[i] = "X";
-                }
-                else
-                {
-                    positions[i] = " ";
-                }
+                positions[i] = " ";
             }
             return positions;
         }
