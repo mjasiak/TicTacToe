@@ -17,7 +17,7 @@ namespace TicTacToe.Resolver.Processors
                 bool isMoveAllowed =
                     game.Map[move.Destination] != 'X' && game.Map[move.Destination] != 'O' ?
                     true : false;
-                    
+
                 if (isMoveAllowed)
                 {
                     game.Map[move.Destination] = move.Player.Mark;
@@ -29,9 +29,25 @@ namespace TicTacToe.Resolver.Processors
                         Status = MessageStatus.Success,
                     };
                 }
+                else
+                {
+                    return new ResponseMessage
+                    {
+                        Method = "game/moved",
+                        Status = MessageStatus.Failure,
+                        Text = "You're not allowed to move here."
+                    };
+                }
             }
-
-            throw new System.NotImplementedException();
+            else
+            {
+                return new ResponseMessage
+                {
+                    Method = "game/moved",
+                    Status = MessageStatus.Failure,
+                    Text = "It's not your turn. Wait for your opponent."
+                };
+            }
         }
     }
 
