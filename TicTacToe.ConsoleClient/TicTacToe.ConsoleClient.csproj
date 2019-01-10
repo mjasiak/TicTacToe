@@ -6,12 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ninject" Version="3.3.4" />
+    <ProjectReference Include="..\TicTacToe.Common\TicTacToe.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TicTacToe.Common\TicTacToe.Common.csproj" />
-    <ProjectReference Include="..\TicTacToe.Resolver\TicTacToe.Resolver.csproj" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
-
 </Project>
