@@ -57,7 +57,6 @@ namespace TicTacToe.ConsoleClient
             while (!message.Equals("exit"))
             {
                 var choose = message.Split(' ')[0];
-                Console.WriteLine(choose);
                 switch (choose)
                 {
                     case "newgame":
@@ -70,10 +69,18 @@ namespace TicTacToe.ConsoleClient
                             connectionHandler.Send(requestMessage.Serialize());
                             break;
                         }
-                    case "refresh":
+                    case "continue":
                         {
-                            Console.Clear();
-                            BuildMap(_currentGame.Map);
+                            if (_currentGame != null)
+                            {
+                                Console.Clear();
+                                BuildMap(_currentGame.Map);
+                                IsYourTurn();
+                            }
+                            else
+                            {
+                                Console.WriteLine("You haven't started game yet. Write 'newgame' to start it.");
+                            }
                             break;
                         }
                     case "move":
@@ -88,7 +95,7 @@ namespace TicTacToe.ConsoleClient
                                     {
                                         GameId = _currentGame.Id,
                                         Player = _currentPlayer,
-                                        Destination = destination
+                                        Destination = destination - 1
                                     };
                                     requestMessage = new RequestMessage
                                     {
@@ -99,7 +106,6 @@ namespace TicTacToe.ConsoleClient
                                     break;
                                 }
                             }
-                            BuildMap(_currentGame.Map);
                             Console.WriteLine("First parameter of 'move' should be number from 1-9");
                             break;
                         }
@@ -108,7 +114,11 @@ namespace TicTacToe.ConsoleClient
                             Console.Clear();
                             Console.WriteLine("--- TicTacToe Help Menu ---");
                             Console.WriteLine("  - newgame | Starts new game.");
-                            Console.WriteLine("  - refresh | Refresh game map.");
+                            if (_currentGame != null)
+                            {
+                                Console.WriteLine("  - continue | Continue game.");
+                                Console.WriteLine("  - move field_number | Set your mark on specified field.");
+                            }
                             Console.WriteLine("  - help    | Shows help menu");
                             Console.WriteLine("  - exit    | Close game.");
                             break;
@@ -122,6 +132,7 @@ namespace TicTacToe.ConsoleClient
                 message = Console.ReadLine();
             }
 
+            connectionHandler.Close();
             Console.WriteLine("* Client has exited... *");
             Console.Clear();
         }
@@ -172,9 +183,9 @@ namespace TicTacToe.ConsoleClient
                         if (responseMessage.Status == MessageStatus.Success)
                         {
                             Console.Clear();
-                            Console.WriteLine("* Game has been started *\r\n");
                             _currentGame = responseMessage.Data.Deserialize<Game>();
                             BuildMap(_currentGame.Map);
+                            Console.WriteLine("\r\n* Game has been started *");
                             if (_currentPlayer.Mark.Equals('X'))
                             {
                                 Console.WriteLine("* You start *");
@@ -197,15 +208,11 @@ namespace TicTacToe.ConsoleClient
                             _currentGame = responseMessage.Data.Deserialize<Game>();
                             Console.Clear();
                             BuildMap(_currentGame.Map);
-                            bool isYourTurn = _currentGame.Turn == _currentPlayer.Mark;
-                            if (isYourTurn)
-                            {
-                                Console.WriteLine("* Your turn *");
-                            }
-                            else
-                            {
-                                Console.WriteLine("* Your opponent turn *");
-                            }
+                            IsYourTurn();
+                        }
+                        else
+                        {
+                            Console.WriteLine(responseMessage.Text);
                         }
                         break;
                     }
@@ -217,16 +224,21 @@ namespace TicTacToe.ConsoleClient
             }
         }
 
-        #region NotUsed
-        private static void Introduce(string name, TcpClient tcpClient)
+        #region Helpers
+        private static void IsYourTurn()
         {
-            var stream = tcpClient.GetStream();
-            var streamWriter = new StreamWriter(stream);
-            streamWriter.WriteLine(name);
-            streamWriter.Flush();
+            bool isYourTurn = _currentGame.Turn == _currentPlayer.Mark;
+            if (isYourTurn)
+            {
+                Console.WriteLine("\r\n* Your turn *");
+            }
+            else
+            {
+                Console.WriteLine("\r\n* Your opponent turn *");
+            }
         }
 
-        static void BuildMap(char[] map)
+        private static void BuildMap(char[] map)
         {
             Console.WriteLine($" {map[0]}  |  {map[1]}  |  {map[2]}  ");
             Console.WriteLine("---------------");
@@ -234,14 +246,14 @@ namespace TicTacToe.ConsoleClient
             Console.WriteLine("---------------");
             Console.WriteLine($" {map[6]}  |  {map[7]}  |  {map[8]}  ");
         }
-        static string[] InitPositions()
+        #endregion
+        #region NotUsed
+        private static void Introduce(string name, TcpClient tcpClient)
         {
-            var positions = new string[9];
-            for (int i = 0; i < positions.Length; i++)
-            {
-                positions[i] = " ";
-            }
-            return positions;
+            var stream = tcpClient.GetStream();
+            var streamWriter = new StreamWriter(stream);
+            streamWriter.WriteLine(name);
+            streamWriter.Flush();
         }
         private static string GetClientRequest(NetworkStream clientStream)
         {

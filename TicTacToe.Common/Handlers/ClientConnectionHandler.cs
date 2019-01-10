@@ -1,5 +1,6 @@
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TicTacToe.Common
@@ -8,11 +9,13 @@ namespace TicTacToe.Common
     {
         private NetworkStream _networkStream;
         private Task _listeningTask;
+        private readonly CancellationTokenSource _cancelationTokenSource;
 
         public ClientConnectionHandler(ClientConnection connection)
         {
             Connection = connection;
             _networkStream = Connection.Socket.GetStream();
+            _cancelationTokenSource = new CancellationTokenSource();
         }
 
         public ClientConnection Connection { get; private set; }
@@ -35,20 +38,32 @@ namespace TicTacToe.Common
 
         public void Close()
         {
-            Connection.Socket.Close();
+            _cancelationTokenSource.Cancel();
+            Connection.Socket.Client.Disconnect(false);
         }
 
         public void StartListening()
         {
-            _listeningTask = Task.Run(() =>
+            var ct = _cancelationTokenSource.Token;
+            _listeningTask = Task.Factory.StartNew(() =>
             {
                 while (true)
                 {
                     var streamReader = new StreamReader(_networkStream);
-                    var response = streamReader.ReadLine();
-                    OnMessageReceived(this, response);
+                    try
+                    {
+                        var response = streamReader.ReadLine();
+                        OnMessageReceived(this, response);
+                    }
+                    catch
+                    {
+                        if (ct.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                    }
                 }
-            });
+            }, ct);
         }
     }
 

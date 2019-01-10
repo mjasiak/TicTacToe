@@ -22,7 +22,7 @@ namespace TicTacToe.Resolver.Managers
                     Method = "player/added",
                     InnerMethod = "samechar",
                     Status = MessageStatus.Failure,
-                    Text = string.Format("Your opponent choosed {0} first, you'll start with {1}", newPlayer.Mark, newPlayer.Mark.Equals("X") ? "O" : "X")
+                    Text = string.Format("Your opponent choosed {0} first, you'll start with {1}", newPlayer.Mark, newPlayer.Mark.Equals('X') ? "O" : "X")
                 };
             }
             else
