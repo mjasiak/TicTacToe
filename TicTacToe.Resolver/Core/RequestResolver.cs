@@ -1,7 +1,5 @@
-using System;
-using System.IO;
 using TicTacToe.Common.Converters;
-using TicTacToe.Common.Models;
+using TicTacToe.Common.Models.Messages;
 using TicTacToe.Resolver.Managers;
 
 namespace TicTacToe.Resolver.Core
@@ -33,6 +31,11 @@ namespace TicTacToe.Resolver.Core
                 case "player/add":
                     {
                         responseMessage = _playersManager.AddPlayer(requestMessage.Data);
+                        break;
+                    }
+                case "game/move":
+                    {
+                        responseMessage = _gameManager.Move(requestMessage.Data);
                         break;
                     }
             }

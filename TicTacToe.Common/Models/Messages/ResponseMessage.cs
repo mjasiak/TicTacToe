@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using TicTacToe.Common.Enums;
 
-namespace TicTacToe.Common.Models
+namespace TicTacToe.Common.Models.Messages
 {
     public class ResponseMessage : Message
     {
@@ -15,12 +15,14 @@ namespace TicTacToe.Common.Models
                     Method = string.Empty,
                     InnerMethod = string.Empty,
                     Status = MessageStatus.Failure,
-                    Text = string.Empty
+                    Text = string.Empty,
+                    Broadcast = false
                 };
             }
         }
         public MessageStatus Status { get; set; }
-        public string Text { get; set; }
-        public string InnerMethod { get; set; }
+        public string Text { get; set; } = string.Empty;
+        public string InnerMethod { get; set; } = string.Empty;
+        public bool Broadcast { get; set; } = true;
     }
 }

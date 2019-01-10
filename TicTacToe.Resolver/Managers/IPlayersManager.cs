@@ -1,4 +1,4 @@
-using TicTacToe.Common.Models;
+using TicTacToe.Common.Models.Messages;
 
 namespace TicTacToe.Resolver.Managers
 {

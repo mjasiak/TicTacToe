@@ -3,6 +3,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using TicTacToe.Common.Enums;
 using TicTacToe.Common.Models;
+using TicTacToe.Common.Models.Messages;
 
 namespace TicTacToe.Resolver.Managers
 {
@@ -12,7 +13,7 @@ namespace TicTacToe.Resolver.Managers
         public ResponseMessage AddPlayer(string data)
         {
             var newPlayer = JsonConvert.DeserializeObject<Player>(data);
-            var sameChar = _listOfConnectedPlayers.Any(p => p.XO == newPlayer.XO);
+            var sameChar = _listOfConnectedPlayers.Any(p => p.Mark == newPlayer.Mark);
             if (sameChar)
             {
                 return new ResponseMessage
@@ -21,7 +22,7 @@ namespace TicTacToe.Resolver.Managers
                     Method = "player/added",
                     InnerMethod = "samechar",
                     Status = MessageStatus.Failure,
-                    Text = string.Format("Your opponent choosed {0} first, you'll start with {1}", newPlayer.XO, newPlayer.XO.Equals("X") ? "O" : "X")
+                    Text = string.Format("Your opponent choosed {0} first, you'll start with {1}", newPlayer.Mark, newPlayer.Mark.Equals("X") ? "O" : "X")
                 };
             }
             else
@@ -29,9 +30,10 @@ namespace TicTacToe.Resolver.Managers
                 _listOfConnectedPlayers.Add(newPlayer);
                 return new ResponseMessage
                 {
-                    Data = string.Empty,
+                    Data = JsonConvert.SerializeObject(newPlayer),
                     Method = "player/added",
                     Status = MessageStatus.Success,
+                    Hidden = true,
                     Text = $"Player {newPlayer.Name} connected succesfully."
                 };
             }

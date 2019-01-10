@@ -1,5 +1,5 @@
 using Newtonsoft.Json;
-using TicTacToe.Common.Models;
+using TicTacToe.Common.Models.Messages;
 
 namespace TicTacToe.Common.Converters
 {

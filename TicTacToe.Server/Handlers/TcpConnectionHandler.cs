@@ -36,16 +36,25 @@ namespace TicTacToe.Server.Handlers
             var clientConnectionHandler = source as ClientConnectionHandler;
             var responseMessage = _requestResolver.Resolve(requestMessage);
 
-            var serializedResponseMessage = JsonConvert.SerializeObject(responseMessage);
-            clientConnectionHandler.Send(serializedResponseMessage);
+            var clientSerializedResponseMessage = responseMessage.Serialize();
+            clientConnectionHandler.Send(clientSerializedResponseMessage);
+
             if (responseMessage.Status == MessageStatus.Success)
             {
-                foreach (var connection in _activeConnections)
+                if (responseMessage.Broadcast)
                 {
-                    if (connection.Id != clientConnectionHandler.Connection.Id)
+                    if (responseMessage.Hidden)
                     {
-                        var userConnectionHandler = new ClientConnectionHandler(connection);
-                        userConnectionHandler.Send(serializedResponseMessage);
+                        responseMessage.Data = string.Empty;
+                    }
+                    var serializedResponseMessage = responseMessage.Serialize();
+                    foreach (var connection in _activeConnections)
+                    {
+                        if (connection.Id != clientConnectionHandler.Connection.Id)
+                        {
+                            var userConnectionHandler = new ClientConnectionHandler(connection);
+                            userConnectionHandler.Send(serializedResponseMessage);
+                        }
                     }
                 }
             }

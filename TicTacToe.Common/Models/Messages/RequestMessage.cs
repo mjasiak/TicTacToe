@@ -1,4 +1,4 @@
-namespace TicTacToe.Common.Models
+namespace TicTacToe.Common.Models.Messages
 {
     public sealed class RequestMessage : Message
     {

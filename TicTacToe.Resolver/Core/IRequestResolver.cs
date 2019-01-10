@@ -1,5 +1,4 @@
-using System.IO;
-using TicTacToe.Common.Models;
+using TicTacToe.Common.Models.Messages;
 
 namespace TicTacToe.Resolver.Core
 {
