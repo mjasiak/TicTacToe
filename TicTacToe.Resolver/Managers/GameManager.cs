@@ -14,13 +14,13 @@ namespace TicTacToe.Resolver.Managers
     public class GameManager : IGameManager
     {
         private readonly IPlayersManager _playersManager;
-        private readonly IMoveProcessor _moveProcessor;
+        private readonly IGameProcessor _gameProcessor;
         private List<Game> _activeGames = new List<Game>();
 
-        public GameManager(IPlayersManager playersManager, IMoveProcessor moveProcessor)
+        public GameManager(IPlayersManager playersManager, IGameProcessor gameProcessor)
         {
             _playersManager = playersManager;
-            _moveProcessor = moveProcessor;
+            _gameProcessor = gameProcessor;
         }
         public ResponseMessage Start()
         {
@@ -71,8 +71,8 @@ namespace TicTacToe.Resolver.Managers
         public ResponseMessage Move(string moveData)
         {
             Move move = moveData.Deserialize<Move>();
-            Game game = _activeGames.FirstOrDefault(g => g.Id == move.GameId);            
-            return _moveProcessor.Process(game, move);
+            Game game = _activeGames.FirstOrDefault(g => g.Id == move.GameId);         
+            return _gameProcessor.Process(game, move);
         }
     }
 
