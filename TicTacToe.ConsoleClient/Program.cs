@@ -207,8 +207,15 @@ namespace TicTacToe.ConsoleClient
                         {
                             _currentGame = responseMessage.Data.Deserialize<Game>();
                             Console.Clear();
-                            BuildMap(_currentGame.Map);
-                            IsYourTurn();
+                            if (_currentGame.Finished)
+                            {
+                                WhoWon();
+                            }
+                            else
+                            {
+                                BuildMap(_currentGame.Map);
+                                IsYourTurn();
+                            }
                         }
                         else
                         {
@@ -225,6 +232,15 @@ namespace TicTacToe.ConsoleClient
         }
 
         #region Helpers
+        private static void WhoWon(){
+            bool didIWin = _currentGame.Winner.Equals(_currentPlayer.Mark);
+            if(didIWin){
+                Console.WriteLine("\r\n* You won *\r\n");
+            }
+            else{
+                Console.WriteLine("\r\n* Your opponent won *\r\n");
+            }
+        }
         private static void IsYourTurn()
         {
             bool isYourTurn = _currentGame.Turn == _currentPlayer.Mark;
